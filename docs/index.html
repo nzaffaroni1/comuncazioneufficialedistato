@@ -687,21 +687,61 @@
             }
         }
         
-        function togglePdfViewer() {
-            const viewer = document.getElementById('pdfViewer');
-            if (viewer.style.display === 'none' || viewer.style.display === '') {
-                viewer.style.display = 'block';
-                document.body.style.overflow = 'hidden'; // Prevent background scrolling
-                if (audioEnabled) playSound('open');
+function togglePdfViewer() {
+            // Apri il PDF utilizzando il lettore PDF del dispositivo
+            const pdfUrl = 'operazionespeciale.pdf';
+            
+            // Verifica se siamo su mobile o desktop
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                // Su mobile, apri il PDF nel lettore predefinito
+                window.open(pdfUrl, '_blank');
             } else {
-                viewer.style.display = 'none';
-                document.body.style.overflow = 'auto'; // Restore scrolling
-                if (audioEnabled) playSound('close');
+                // Su desktop, apri in una nuova finestra/tab
+                window.open(pdfUrl, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
             }
+            
+            if (audioEnabled) playSound('open');
+            
+            // Mostra notifica di apertura
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #007bff;
+                color: white;
+                padding: 15px 25px;
+                border-radius: 25px;
+                z-index: 1001;
+                font-weight: bold;
+                animation: slideDown 0.5s ease;
+            `;
+            notification.textContent = '📖 Apertura PDF in corso...';
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
         }
         
         function downloadPdf() {
-            // Simula il download del PDF
+            // Download reale del PDF
+            const pdfUrl = 'operazionespeciale.pdf';
+            
+            // Crea un link temporaneo per il download
+            const link = document.createElement('a');
+            link.href = pdfUrl;
+            link.download = 'Prenotazione_Ristorante_Operazione_Speciale.pdf';
+            link.style.display = 'none';
+            
+            // Aggiungi il link al DOM, clicca e rimuovi
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
             if (audioEnabled) playSound('download');
             
             // Mostra notifica di download
@@ -725,63 +765,6 @@
             setTimeout(() => {
                 notification.remove();
             }, 3000);
-            
-            // Qui potresti aggiungere la logica reale per il download
-            console.log('Download PDF richiesto');
-        }
-        
-        function handlePdfUpload(event) {
-            const file = event.target.files[0];
-            if (file && file.type === 'application/pdf') {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    // Mostra il PDF caricato
-                    const pdfContent = document.getElementById('pdfContent');
-                    const placeholder = document.querySelector('.pdf-instructions');
-                    
-                    // Crea l'elemento embed per il PDF
-                    const embed = document.createElement('embed');
-                    embed.src = e.target.result;
-                    embed.type = 'application/pdf';
-                    embed.width = '100%';
-                    embed.height = '600px';
-                    embed.style.border = '2px solid #003366';
-                    embed.style.borderRadius = '10px';
-                    
-                    // Sostituisci il placeholder con il PDF
-                    pdfContent.innerHTML = '';
-                    pdfContent.appendChild(embed);
-                    pdfContent.style.display = 'block';
-                    placeholder.style.display = 'none';
-                    
-                    // Mostra notifica di successo
-                    const notification = document.createElement('div');
-                    notification.style.cssText = `
-                        position: fixed;
-                        top: 100px;
-                        left: 50%;
-                        transform: translateX(-50%);
-                        background: #28a745;
-                        color: white;
-                        padding: 15px 25px;
-                        border-radius: 25px;
-                        z-index: 1002;
-                        font-weight: bold;
-                        animation: slideDown 0.5s ease;
-                    `;
-                    notification.textContent = '✅ PDF caricato con successo!';
-                    document.body.appendChild(notification);
-                    
-                    setTimeout(() => {
-                        notification.remove();
-                    }, 3000);
-                    
-                    if (audioEnabled) playSound('success');
-                };
-                reader.readAsDataURL(file);
-            } else {
-                alert('⚠️ Seleziona un file PDF valido');
-            }
         }
         
         function playSound(type) {
@@ -864,7 +847,7 @@
         </div>
         
         <div class="protocollo">
-            Prot. n° 2025-3921-OPR | Data: 13/06/2025 | Ora: <span id="currentDateTime"></span>
+            Prot. n° 2025-3921-OPR | Data: 18/06/2025 | Ora: <span id="currentDateTime"></span>
         </div>
         
         <div class="content">
@@ -884,22 +867,22 @@
                     <p><strong>ID Operazione:</strong> OP-RS-3927/25</p>
                     <p><strong>Nome Codice:</strong> "CENA DI CELEBRAZIONE"</p>
                     <p><strong>Priorità:</strong> ALTA</p>
-                    <p><strong>Scadenza:</strong> 15/06/2025</p>
+                    <p><strong>Scadenza:</strong> 17/12/2025</p>
                 </div>
                 
                 <div class="info-box">
                     <h3>🏢 Unità Responsabile</h3>
-                    <p><strong>Direzione:</strong> Generale Operazioni Informali</p>
-                    <p><strong>Settore:</strong> Eventi Strategici</p>
-                    <p><strong>Comandante:</strong> Col. M. Rossi</p>
+                    <p><strong>Direzione:</strong> Molecola Special Ops</p>
+                    <p><strong>Settore:</strong> Eventi Strategici di Bevuta</p>
+                    <p><strong>Comandante:</strong> Col. N. Zaffaroni</p>
                     <p><strong>Contatto:</strong> [CLASSIFICATO]</p>
                 </div>
                 
                 <div class="info-box">
                     <h3>📍 Informazioni Logistiche</h3>
-                    <p><strong>Location:</strong> [DA CONFERMARE]</p>
-                    <p><strong>Data Evento:</strong> [RISERVATO]</p>
-                    <p><strong>Durata:</strong> 4-6 ore</p>
+                    <p><strong>Location:</strong> via San Valerio 4, Albiate, MB </p>
+                    <p><strong>Data Evento:</strong> entro 17/12/2025</p>
+                    <p><strong>Durata:</strong> 2 bottiglie di vino (non incluse)</p>
                     <p><strong>Dress Code:</strong> Business Casual</p>
                 </div>
             </div>
@@ -955,23 +938,23 @@
                 <div class="partecipanti-grid">
                     <div class="partecipante">
                         <strong>🎖️ Aldrin Cortez Kent</strong><br>
-                        <small>Specialista Logistica</small>
+                        <small>Specialista Operazioni Invernali</small>
                     </div>
                     <div class="partecipante">
                         <strong>🎖️ Alessandro Picco</strong><br>
-                        <small>Coordinatore Sicurezza</small>
+                        <small>Coordinatore Vendite</small>
                     </div>
                     <div class="partecipante">
                         <strong>🎖️ Alessia Basile</strong><br>
-                        <small>Analista Strategica</small>
+                        <small>Supervisore Legale</small>
                     </div>
                     <div class="partecipante">
                         <strong>🎖️ Giorgia Moioli</strong><br>
-                        <small>Esperta Comunicazioni</small>
+                        <small>Resposabile Comunicazioni</small>
                     </div>
                     <div class="partecipante">
                         <strong>🎖️ Andrea Seghezzi</strong><br>
-                        <small>Tecnico Operativo</small>
+                        <small>Tecnico Operativo dei Trasporti</small>
                     </div>
                     <div class="partecipante">
                         <strong>🎖️ Angelo Lombardo</strong><br>
@@ -983,11 +966,11 @@
                     </div>
                     <div class="partecipante">
                         <strong>🎖️ Camilla Monguzzi</strong><br>
-                        <small>Addetta Protocollo</small>
+                        <small>Responsabile Qualità</small>
                     </div>
                     <div class="partecipante">
                         <strong>🎖️ Cristina Recalcati</strong><br>
-                        <small>Responsabile Qualità</small>
+                        <small>Responsabile Coordinamento</small>
                     </div>
                     <div class="partecipante">
                         <strong>🎖️ Damocle Falsone</strong><br>
@@ -995,11 +978,11 @@
                     </div>
                     <div class="partecipante">
                         <strong>🎖️ Davide Fusina</strong><br>
-                        <small>Tecnico Sistemi</small>
+                        <small>Tecnico Sistemi e Ambienti</small>
                     </div>
                     <div class="partecipante">
                         <strong>🎖️ Francesco Dimauro</strong><br>
-                        <small>Consulente Strategico</small>
+                        <small>Consulente Tecnico</small>
                     </div>
                     <div class="partecipante">
                         <strong>🎖️ Francesco Gramazio</strong><br>
@@ -1019,23 +1002,19 @@
                     </div>
                     <div class="partecipante">
                         <strong>🎖️ Matteo Crippa</strong><br>
-                        <small>Esperto Tecnologie</small>
+                        <small>Esperto Infiltrazioni</small>
                     </div>
                     <div class="partecipante">
                         <strong>🎖️ Matteo Franchellucci</strong><br>
-                        <small>Coordinatore Missioni</small>
+                        <small>Coordinatore Missioni e Trasporti</small>
                     </div>
                     <div class="partecipante">
                         <strong>🎖️ Stefano D'Ottavio</strong><br>
-                        <small>Vice Comandante</small>
+                        <small>Comandante Missioni di Soccorso</small>
                     </div>
                     <div class="partecipante">
                         <strong>🎖️ Valerio Borrelli</strong><br>
                         <small>Addetto Sicurezza</small>
-                    </div>
-                    <div class="partecipante">
-                        <strong>🎖️ Nicolò Zaffaroni</strong><br>
-                        <small>Specialista Comunicazioni</small>
                     </div>
                     <div class="partecipante">
                         <strong>🎖️ Mattia Villa</strong><br>
@@ -1052,8 +1031,8 @@
                 <div class="documents-grid">
                     <div class="document-card">
                         <div class="document-icon">📄</div>
-                        <h4>Documento Primario</h4>
-                        <p>Ordine di Servizio Ufficiale</p>
+                        <h4>Documentazione dell'operazione</h4>
+                        <p>Ordine di Servizio Ufficiale al Presidente della Repubblica</p>
                         <div class="document-status classified">CLASSIFICATO</div>
                     </div>
                     
@@ -1134,8 +1113,8 @@
         <div class="footer">
             <div class="logo-footer">🏛️</div>
             <p><strong>Ministero della Sicurezza Nazionale</strong></p>
-            <p>Divisione Eventi Gastronomici Segreti - Sezione Operazioni Speciali</p>
-            <p>Via della Repubblica, 1 - 00100 Roma | Tel: [CLASSIFICATO] | Email: [RISERVATO]</p>
+            <p>Divisione Molecola Special Ops - Eventi Strategici di Bevuta</p>
+            <p>Via Sant'Andrea, 21 - 20900 Monza | Tel: [CLASSIFICATO] | Email: [RISERVATO]</p>
             <p style="margin-top: 15px; font-size: 0.8em; opacity: 0.7;">
                 Documento generato automaticamente dal Sistema Integrato di Gestione Operazioni (SIGO) v3.2.1<br>
                 Codice Sicurezza: SHA-256-4F7A8BC2E91D | Timestamp: 2025-06-13T14:30:22Z
